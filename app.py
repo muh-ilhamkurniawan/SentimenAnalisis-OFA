@@ -37,10 +37,11 @@ if (selected == "Info TikTok"):
 
         # Dapatkan path absolut ke file CSV
         csv_path_info = os.path.join('/mount/src/sentimenanalisis-ofa', 'InfoTikTok.csv')
+        csv_path_review = os.path.join('/mount/src/sentimenanalisis-ofa', 'TiktokReview.csv')
 
         # Baca file CSV
         df_info = pd.read_csv(csv_path_info)
-        df_reviews = pd.read_csv('TiktokReview.csv')
+        df_reviews = pd.read_csv(csv_path_review)
         # Menampilkan waktu di Streamlit
         current_time = df_info[['value']].iloc[-1].values[0]
         st.write("Data Sentimen Analisis Review Aplikasi Tiktok diambil pada :", current_time)
