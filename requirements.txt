@@ -9,4 +9,3 @@ function
 tensorflow==2.12.0
 nltk==3.8.1
 Sastrawi
-os
