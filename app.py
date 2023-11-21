@@ -10,6 +10,7 @@ import re
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import os
 
 #navigasi sidebar
 with st.sidebar:
@@ -29,9 +30,13 @@ if (selected == "Info TikTok"):
     button1, button2= st.columns(2)
 
     if button1.button("Lihat Review Lama"):
+        # Dapatkan path absolut ke file CSV
+        csv_path_info = os.path.abspath('InfoTikTok.csv')
+        csv_path_review = os.path.abspath('TiktokReview.csv')
+
         # Implementasi lihat reviews lama
-        df_info = pd.read_csv('InfoTikTok.csv')
-        df_reviews = pd.read_csv('TiktokReview.csv')
+        df_info = pd.read_csv(csv_path_info)
+        df_reviews = pd.read_csv(csv_path_review)
         # Menampilkan waktu di Streamlit
         current_time = df_info[['value']].iloc[-1].values[0]
         st.write("Data Sentimen Analisis Review Aplikasi Tiktok diambil pada :", current_time)
