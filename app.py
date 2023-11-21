@@ -33,7 +33,13 @@ if (selected == "Info TikTok"):
         # Cetak working directory
         st.write("Working Directory:", os.getcwd())
         # Implementasi lihat reviews lama
-        df_info = pd.read_csv('InfoTikTok.csv')
+        # df_info = pd.read_csv('InfoTikTok.csv')
+
+        # Dapatkan path absolut ke file CSV
+        csv_path_info = os.path.join('/mount/src/sentimenanalisis-ofa', 'InfoTikTok.csv')
+
+        # Baca file CSV
+        df_info = pd.read_csv(csv_path_info)
         df_reviews = pd.read_csv('TiktokReview.csv')
         # Menampilkan waktu di Streamlit
         current_time = df_info[['value']].iloc[-1].values[0]
