@@ -4,6 +4,10 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import csv
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from PIL import Image
+import os
 # membuat functions untuk preprocessing text
 
 def cleaningText(text):
@@ -100,3 +104,8 @@ def sentiment_analysis_lexicon_indonesia(text):
     else:
         polarity = 'neutral'
     return score, polarity
+
+# Fungsi untuk membuat WordCloud
+def generate_wordcloud(text):
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+    return wordcloud

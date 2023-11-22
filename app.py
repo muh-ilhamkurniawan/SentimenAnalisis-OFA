@@ -5,12 +5,16 @@ import numpy as np
 from google_play_scraper import Sort, reviews, app  
 import matplotlib.pyplot as plt
 from datetime import datetime
-from function import text_preprocessing_process, sentiment_analysis_lexicon_indonesia
+from function import text_preprocessing_process, sentiment_analysis_lexicon_indonesia, generate_wordcloud
 import re
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from PIL import Image
 import os
+import csv
 
 #navigasi sidebar
 with st.sidebar:
@@ -30,18 +34,25 @@ if (selected == "Info TikTok"):
     button1, button2= st.columns(2)
 
     if button1.button("Lihat Review Lama"):
-        # get the absolute path to the directory contain the .csv file
-        dir_name = os.path.abspath(os.path.dirname(__file__))
+        def baca_csv(file_path, encoding='utf-8'):
+            with open(file_path, 'r', encoding=encoding) as file:
+                csv_reader = csv.reader(file)
+                # Membaca header
+                header = next(csv_reader)
+                
+                # Membaca baris-baris berikutnya
+                rows = list(csv_reader)
 
-        # join the bobrza1.csv to directory to get file path
-        location = os.path.join(dir_name, 'InfoTikTok.csv')
-
-        # join the route.csv to directory to get file path
-        location2 = os.path.join(dir_name, 'TiktokReview.csv')
+            # Membuat DataFrame dengan menggunakan header sebagai nama kolom
+            df_info = pd.DataFrame(rows, columns=header)
+            
+            return df_info
 
         # Implementasi lihat reviews lama
-        df_info = pd.read_csv(location)
-        df_reviews = pd.read_csv(location2)
+        file_path1 = 'InfoTiktok.csv'
+        file_path2 = 'TiktokReview.csv'
+        df_info = baca_csv(file_path1)
+        df_reviews = baca_csv(file_path2)
 
         # Menampilkan waktu di Streamlit
         current_time = df_info[['value']].iloc[-1].values[0]
@@ -49,16 +60,31 @@ if (selected == "Info TikTok"):
                 
 
         # Menampilkan hasil review
-        st.write("Informasi Aplikasi:")
+        st.subheader("Informasi Aplikasi:")
         st.dataframe(df_info)
 
         # Menampilkan hasil review
-        st.write("Sorted Reviews:")
+        st.subheader("Sorted Reviews:")
         st.dataframe(df_reviews[['userName', 'score', 'at', 'content']])
 
         # Menampilkan hasil review setelah preprocessing dan analisis sentimen
-        st.write("Sorted Reviews after Text Preprocessing and Sentiment Analysis:")
+        st.subheader("Sorted Reviews after Text Preprocessing and Sentiment Analysis:")
         st.dataframe(df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
+
+        # Tampilkan WordCloud dari kolom 'clean_teks'
+        if 'clean_teks' in df_reviews.columns:
+            clean_text_combined = ' '.join(df_reviews['clean_teks'])
+            wordcloud = generate_wordcloud(clean_text_combined)
+
+            # Tampilkan WordCloud menggunakan Matplotlib
+            st.subheader("WordCloud Hasil:")
+            fig, ax = plt.subplots(figsize=(10, 5))
+            ax.imshow(wordcloud, interpolation='bilinear')
+            ax.axis('off')
+            st.pyplot(fig)
+        else:
+            st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
+
 
         # Hitung jumlah masing-masing nilai di kolom 'polarity'
         polarity_counts = df_reviews['polarity'].value_counts()
@@ -71,11 +97,10 @@ if (selected == "Info TikTok"):
             return fig
 
         # Main Streamlit app
-        st.write("Pie Chart of Polarity Distribution")
+        st.subheader("Pie Chart of Polarity Distribution")
 
         # Menampilkan pie chart
         st.pyplot(create_pie_chart(polarity_counts))
-
 
     if button2.button("Lihat Review Terbaru"):
         # Implementasi fungsi reviews baru
