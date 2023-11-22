@@ -49,7 +49,7 @@ if (selected == "Info TikTok"):
             return df_info
 
         # Implementasi lihat reviews lama
-        file_path1 = './static/InfoTiktok.csv'
+        file_path1 = 'https://sentimentanalysis-pstore-ofa.streamlit.app/app/static/info_tiktok.csv'
         file_path2 = './static/TiktokReview.csv'
         df_info = baca_csv(file_path1)
         df_reviews = baca_csv(file_path2)
