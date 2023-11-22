@@ -35,8 +35,8 @@ if (selected == "Info TikTok"):
 
     if button1.button("Lihat Review Lama"):
         # Implementasi lihat reviews lama
-        df_info = pd.read_csv('https://sentimentanalysis-pstore-ofa.streamlit.app/app/static/InfoTiktok.csv', sep=',')
-        df_reviews = pd.read_csv('https://sentimentanalysis-pstore-ofa.streamlit.app/app/static/TiktokReview.csv', sep=',')
+        df_info = pd.read_csv('info_tiktok.csv', sep=',')
+        df_reviews = pd.read_csv('tiktok_review.csv', sep=',')
 
         # Menampilkan waktu di Streamlit
         current_time = df_info[['value']].iloc[-1].values[0]
