@@ -34,25 +34,9 @@ if (selected == "Info TikTok"):
     button1, button2= st.columns(2)
 
     if button1.button("Lihat Review Lama"):
-        def baca_csv(file_path, encoding='utf-8'):
-            with open(file_path, 'r', encoding=encoding) as file:
-                csv_reader = csv.reader(file)
-                # Membaca header
-                header = next(csv_reader)
-                
-                # Membaca baris-baris berikutnya
-                rows = list(csv_reader)
-
-            # Membuat DataFrame dengan menggunakan header sebagai nama kolom
-            df_info = pd.DataFrame(rows, columns=header)
-            
-            return df_info
-
         # Implementasi lihat reviews lama
-        file_path1 = 'https://sentimentanalysis-pstore-ofa.streamlit.app/app/static/info_tiktok.csv'
-        file_path2 = './static/TiktokReview.csv'
-        df_info = baca_csv(file_path1)
-        df_reviews = baca_csv(file_path2)
+        df_info = pd.read_csv('./static/InfoTiktok.csv', sep=',')
+        df_reviews = pd.read_csv('./static/TiktokReview.csv', sep=',')
 
         # Menampilkan waktu di Streamlit
         current_time = df_info[['value']].iloc[-1].values[0]
