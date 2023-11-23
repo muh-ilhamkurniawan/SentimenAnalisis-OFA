@@ -124,7 +124,7 @@ if (selected == "Info TikTok"):
         # Menambahkan baris ke DataFrame menggunakan loc
         df_app.loc['time'] = new_row
 
-        df_app.to_csv('InfoTikTok.csv', index_label='key')
+        df_app.to_csv('info_tiktok.csv', index_label='key')
 
         # Menampilkan hasil review
         st.write("Sorted Reviews:")
@@ -141,7 +141,7 @@ if (selected == "Info TikTok"):
 
         # Menampilkan hasil review setelah preprocessing dan analisis sentimen
         st.write("Sorted Reviews after Text Preprocessing and Sentiment Analysis:")
-        sorted_df_reviews.to_csv('TikTokReview.csv', index=False)
+        sorted_df_reviews.to_csv('tiktok_review.csv', index=False)
         st.dataframe(sorted_df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
 
         # Hitung jumlah masing-masing nilai di kolom 'polarity'

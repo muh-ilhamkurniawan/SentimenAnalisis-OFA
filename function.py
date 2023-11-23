@@ -1,4 +1,5 @@
 import re
+import pandas as pd
 import string
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -75,16 +76,38 @@ def text_preprocessing_process(text):
 # Memuat data positif dan negatif leksikon
 lexicon_positive = dict()
 
-with open('lexicon_positive.csv', 'r') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
-    for row in reader:
-        lexicon_positive[row[0]] = int(row[1])
+def read_lexicon_csv(file_path, key_column, value_column):
+    lexicon_positive = dict()
+    
+    # Membaca file CSV ke dalam DataFrame
+    df_info = pd.read_csv(file_path, sep=',')
+
+    # Iterasi melalui setiap baris dalam DataFrame dan menambahkannya ke dalam kamus
+    for index, row in df_info.iterrows():
+        lexicon_positive[row[key_column]] = int(row[value_column])
+
+    return lexicon_positive
+
+# Contoh pemanggilan fungsi
+lexicon_positive = read_lexicon_csv('lexicon_positive.csv', 'key', 'value')
+
 
 lexicon_negative = dict()
-with open('lexicon_negative.csv', 'r') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
-    for row in reader:
-        lexicon_negative[row[0]] = int(row[1])
+
+def read_lexicon_csv(file_path, key_column, value_column):
+    lexicon_negative = dict()
+    
+    # Membaca file CSV ke dalam DataFrame
+    df_info = pd.read_csv(file_path, sep=',')
+
+    # Iterasi melalui setiap baris dalam DataFrame dan menambahkannya ke dalam kamus
+    for index, row in df_info.iterrows():
+        lexicon_negative[row[key_column]] = int(row[value_column])
+
+    return lexicon_negative
+
+# Contoh pemanggilan fungsi
+lexicon_negative = read_lexicon_csv('lexicon_negative.csv', 'key', 'value')
 
 # Fungsi untuk menentukan polaritas sentimen tweet
 def sentiment_analysis_lexicon_indonesia(text):
