@@ -9,6 +9,16 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from PIL import Image
 import os
+import nltk
+from nltk.tokenize import RegexpTokenizer
+
+# Path to the directory containing punkt folder (assuming it's in the same directory as function.py)
+punkt_path = os.path.join(os.path.dirname(__file__), 'punkt')
+nltk.data.path.append(punkt_path)
+
+# Download Punkt resource if not already downloaded
+nltk.download('punkt', quiet=True)
+
 # membuat functions untuk preprocessing text
 
 def cleaningText(text):
@@ -28,8 +38,9 @@ def casefoldingText(text): # Mengubah semua karakter dalam teks menjadi huruf ke
     text = text.lower()
     return text
 
-def tokenizingText(text): # Tokenizing atau pemisahan string, teks menjadi daftar token
-    text = word_tokenize(text)
+def tokenizingText(text):
+    tokenizer = RegexpTokenizer(r'\w+')
+    text = tokenizer.tokenize(text)
     return text
 
 def filteringText(text): # Hapus stopwors dalam teks
