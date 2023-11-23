@@ -11,6 +11,8 @@ from PIL import Image
 import os
 import nltk
 from nltk.tokenize import RegexpTokenizer
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
+from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
 # Path to the directory containing punkt folder (assuming it's in the same directory as function.py)
 punkt_path = os.path.join(os.path.dirname(__file__), 'punkt')
@@ -43,15 +45,11 @@ def tokenizingText(text):
     text = tokenizer.tokenize(text)
     return text
 
-def filteringText(text): # Hapus stopwors dalam teks
-    listStopwords = stopwords.words('indonesian')
-    listStopwords.extend(["yg","dg","rt","nya",])
-    listStopwords = set(listStopwords)
-    filtered = []
-    for txt in text:
-        if txt not in listStopwords:
-            filtered.append(txt)
-    text = filtered
+def filteringText(text):
+    factory = StopWordRemoverFactory()
+    stopword_remover = factory.create_stop_word_remover()
+
+    text = [stopword_remover.remove(word) for word in text]
     return text
 
 def stemmingText(text): # Pengurangan suatu kata menjadi kata dasar yang berimbuhan pada akhiran dan awalan atau pada akar kata
