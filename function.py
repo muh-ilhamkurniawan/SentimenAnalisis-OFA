@@ -75,6 +75,7 @@ def text_preprocessing_process(text):
 
 # Memuat data positif dan negatif leksikon
 lexicon_positive = dict()
+lexicon_negative = dict()
 
 def read_lexicon_csv(file_path, key_column, value_column):
     lexicon_positive = dict()
@@ -90,21 +91,6 @@ def read_lexicon_csv(file_path, key_column, value_column):
 
 # Contoh pemanggilan fungsi
 lexicon_positive = read_lexicon_csv('lexicon_positive.csv', 'key', 'value')
-
-
-lexicon_negative = dict()
-
-def read_lexicon_csv(file_path, key_column, value_column):
-    lexicon_negative = dict()
-    
-    # Membaca file CSV ke dalam DataFrame
-    df_info = pd.read_csv(file_path, sep=',')
-
-    # Iterasi melalui setiap baris dalam DataFrame dan menambahkannya ke dalam kamus
-    for index, row in df_info.iterrows():
-        lexicon_negative[row[key_column]] = int(row[value_column])
-
-    return lexicon_negative
 
 # Contoh pemanggilan fungsi
 lexicon_negative = read_lexicon_csv('lexicon_negative.csv', 'key', 'value')
