@@ -1,3 +1,4 @@
+from altair import Orientation
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
@@ -15,17 +16,19 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import os
 import csv
-
+st.title("Sentimen Analisis Play Store Reviews")
 #navigasi sidebar
-with st.sidebar:
-    selected = option_menu("Sentimen Analisis di Playstore", 
-                           ["Info TikTok","Cek Review", "Cek Aplikasi Lain"], 
-        icons=['house', 'gear', 'gear'], 
-        menu_icon="cast", default_index=0)
-    selected
+selected = option_menu(
+        menu_title= None, 
+        options=["Info TikTok","Cek Review", "Cek Aplikasi", "About"], 
+        icons=['house', 'gear', 'gear', 'gear'], 
+        menu_icon="cast", 
+        orientation = "horizontal",
+        default_index=0
+)
 if (selected == "Info TikTok"):
     # Main Streamlit app
-    st.title("TikTok Play Store Reviews")
+    st.header("TikTok Play Store Reviews")
     # Input link aplikasi dari pengguna
     app_link = "com.ss.android.ugc.trill"
     # Tombol untuk memulai review dan informasi aplikasi
@@ -51,41 +54,47 @@ if (selected == "Info TikTok"):
         st.subheader("Daftar Review:")
         st.dataframe(df_reviews[['userName', 'score', 'at', 'content']])
 
-        # Menampilkan hasil review setelah preprocessing dan analisis sentimen
-        st.subheader("Daftar Review setelah Preprocessing Data dan Pengecekan Sentimen Analisis:")
-        st.dataframe(df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
+        
 
-        # Tampilkan WordCloud dari kolom 'clean_teks'
-        if 'clean_teks' in df_reviews.columns:
-            clean_text_combined = ' '.join(df_reviews['clean_teks'])
-            wordcloud = generate_wordcloud(clean_text_combined)
+        tab1, tab2, tab3 = st.tabs(["Clean Text", "WordCloud", "Pie Chart"])
 
-            # Tampilkan WordCloud menggunakan Matplotlib
-            st.subheader("WordCloud Review:")
-            fig, ax = plt.subplots(figsize=(10, 5))
-            ax.imshow(wordcloud, interpolation='bilinear')
-            ax.axis('off')
-            st.pyplot(fig)
-            plt.close()  # Tutup plot Matplotlib
-        else:
-            st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
+        with tab1:
+            # Menampilkan hasil review setelah preprocessing dan analisis sentimen
+            st.subheader("Daftar Review setelah Preprocessing Data dan Pengecekan Sentimen Analisis:")
+            st.dataframe(df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
 
+        with tab2:
+            # Tampilkan WordCloud dari kolom 'clean_teks'
+            if 'clean_teks' in df_reviews.columns:
+                clean_text_combined = ' '.join(df_reviews['clean_teks'])
+                wordcloud = generate_wordcloud(clean_text_combined)
 
-        # Hitung jumlah masing-masing nilai di kolom 'polarity'
-        polarity_counts = df_reviews['polarity'].value_counts()
+                # Tampilkan WordCloud menggunakan Matplotlib
+                st.subheader("WordCloud Review:")
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.imshow(wordcloud, interpolation='bilinear')
+                ax.axis('off')
+                st.pyplot(fig)
+                plt.close()  # Tutup plot Matplotlib
+            else:
+                st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
 
-        # Fungsi untuk membuat pie chart
-        def create_pie_chart(polarity_counts):
-            fig, ax = plt.subplots()
-            ax.pie(polarity_counts, labels=polarity_counts.index, autopct='%1.1f%%', startangle=90)
-            ax.axis('equal')  # Memastikan pie chart berbentuk lingkaran
-            return fig
+        with tab3:
+            # Hitung jumlah masing-masing nilai di kolom 'polarity'
+            polarity_counts = df_reviews['polarity'].value_counts()
 
-        # Main Streamlit app
-        st.subheader("Diagram Pie dari Distribusi Sentimen Analis Review")
+            # Fungsi untuk membuat pie chart
+            def create_pie_chart(polarity_counts):
+                fig, ax = plt.subplots()
+                ax.pie(polarity_counts, labels=polarity_counts.index, autopct='%1.1f%%', startangle=90)
+                ax.axis('equal')  # Memastikan pie chart berbentuk lingkaran
+                return fig
 
-        # Menampilkan pie chart
-        st.pyplot(create_pie_chart(polarity_counts))
+            # Main Streamlit app
+            st.subheader("Diagram Pie dari Distribusi Sentimen Analis Review")
+
+            # Menampilkan pie chart
+            st.pyplot(create_pie_chart(polarity_counts))
 
     if button2.button("Lihat Review Terbaru"):
         # Implementasi fungsi reviews baru
@@ -140,50 +149,54 @@ if (selected == "Info TikTok"):
         sorted_df_reviews['polarity_score'] = results[0]
         sorted_df_reviews['polarity'] = results[1]
 
-        # Menampilkan hasil review setelah preprocessing dan analisis sentimen
-        st.subheader("Daftar Review setelah Preprocessing Data dan Pengecekan Sentimen Analisis:")
-        st.dataframe(sorted_df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
+        tab1, tab2, tab3 = st.tabs(["Clean Text", "WordCloud", "Pie Chart"])
 
-        # Menyimpan tabel
-        sorted_df_reviews.to_csv('tiktok_review.csv', 
-        index=False)
+        with tab1:
+            # Menampilkan hasil review setelah preprocessing dan analisis sentimen
+            st.subheader("Daftar Review setelah Preprocessing Data dan Pengecekan Sentimen Analisis:")
+            st.dataframe(sorted_df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
 
-        # Tampilkan WordCloud dari kolom 'clean_teks'
-        if 'clean_teks' in sorted_df_reviews.columns:
-            clean_text_combined = ' '.join(' '.join(map(str, text)) for text in sorted_df_reviews['clean_teks'])
-            wordcloud = generate_wordcloud(clean_text_combined)
+            # Menyimpan tabel
+            sorted_df_reviews.to_csv('tiktok_review.csv', 
+            index=False)
 
-            # Tampilkan WordCloud menggunakan Matplotlib
-            st.subheader("WordCloud Review:")
-            fig, ax = plt.subplots(figsize=(10, 5))
-            ax.imshow(wordcloud, interpolation='bilinear')
-            ax.axis('off')
-            st.pyplot(fig)
-            plt.close()  # Tutup plot Matplotlib
-        else:
-            st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
+        with tab2:
+            # Tampilkan WordCloud dari kolom 'clean_teks'
+            if 'clean_teks' in sorted_df_reviews.columns:
+                clean_text_combined = ' '.join(' '.join(map(str, text)) for text in sorted_df_reviews['clean_teks'])
+                wordcloud = generate_wordcloud(clean_text_combined)
 
+                # Tampilkan WordCloud menggunakan Matplotlib
+                st.subheader("WordCloud Review:")
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.imshow(wordcloud, interpolation='bilinear')
+                ax.axis('off')
+                st.pyplot(fig)
+                plt.close()  # Tutup plot Matplotlib
+            else:
+                st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
 
-        # Hitung jumlah masing-masing nilai di kolom 'polarity'
-        polarity_counts = sorted_df_reviews['polarity'].value_counts()
+        with tab3:
+            # Hitung jumlah masing-masing nilai di kolom 'polarity'
+            polarity_counts = sorted_df_reviews['polarity'].value_counts()
 
-        # Fungsi untuk membuat pie chart
-        def create_pie_chart(polarity_counts):
-            fig, ax = plt.subplots()
-            ax.pie(polarity_counts, labels=polarity_counts.index, autopct='%1.1f%%', startangle=90)
-            ax.axis('equal')  # Memastikan pie chart berbentuk lingkaran
-            return fig
+            # Fungsi untuk membuat pie chart
+            def create_pie_chart(polarity_counts):
+                fig, ax = plt.subplots()
+                ax.pie(polarity_counts, labels=polarity_counts.index, autopct='%1.1f%%', startangle=90)
+                ax.axis('equal')  # Memastikan pie chart berbentuk lingkaran
+                return fig
 
-        # Main Streamlit app
-        st.subheader("Diagram Pie dari Distribusi Sentimen Analis Review")
+            # Main Streamlit app
+            st.subheader("Diagram Pie dari Distribusi Sentimen Analis Review")
 
-        # Menampilkan pie chart
-        st.pyplot(create_pie_chart(polarity_counts))
+            # Menampilkan pie chart
+            st.pyplot(create_pie_chart(polarity_counts))
 
 if (selected == "Cek Review"):
     # Load model yang sudah di-export
     model = load_model('model.h5')
-    st.title ('Prediksi Ulasan')
+    st.header ('Prediksi Ulasan')
     # Contoh teks baru yang ingin diprediksi
     new_text = st.text_area("Masukkan teks yang ingin diprediksi:")
 
@@ -220,9 +233,9 @@ if (selected == "Cek Review"):
             # Menampilkan hasil prediksi
             st.write(f'Prediksi Sentimen: {predicted_class}')
 
-if (selected == "Cek Aplikasi Lain"):
+if (selected == "Cek Aplikasi"):
     # Main Streamlit app
-    st.title("Play Store Reviews Apk")
+    st.header("Play Store Reviews Apk")
 
     # Input link aplikasi dari pengguna
     app_link = st.text_input("Masukkan link aplikasi")
@@ -282,37 +295,42 @@ if (selected == "Cek Aplikasi Lain"):
             sorted_df_reviews['polarity_score'] = results[0]
             sorted_df_reviews['polarity'] = results[1]
 
-            # Menampilkan hasil review setelah preprocessing dan analisis sentimen
-            st.subheader("Daftar Review setelah Preprocessing Data dan Pengecekan Sentimen Analisis:")
-            st.dataframe(sorted_df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
+            tab1, tab2, tab3 = st.tabs(["Clean Text", "WordCloud", "Pie Chart"])
 
-            # Tampilkan WordCloud dari kolom 'clean_teks'
-            if 'clean_teks' in sorted_df_reviews.columns:
-                clean_text_combined = ' '.join(' '.join(map(str, text)) for text in sorted_df_reviews['clean_teks'])
-                wordcloud = generate_wordcloud(clean_text_combined)
+            with tab1:
+                 # Menampilkan hasil review setelah preprocessing dan analisis sentimen
+                st.subheader("Daftar Review setelah Preprocessing Data dan Pengecekan Sentimen Analisis:")
+                st.dataframe(sorted_df_reviews[['userName', 'score', 'at', 'content', 'clean_teks', 'polarity_score', 'polarity']])
 
-                # Tampilkan WordCloud menggunakan Matplotlib
-                st.subheader("WordCloud Review:")
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.imshow(wordcloud, interpolation='bilinear')
-                ax.axis('off')
-                st.pyplot(fig)
-                plt.close()  # Tutup plot Matplotlib
-            else:
-                st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
+            with tab2:
+                # Tampilkan WordCloud dari kolom 'clean_teks'
+                if 'clean_teks' in sorted_df_reviews.columns:
+                    clean_text_combined = ' '.join(' '.join(map(str, text)) for text in sorted_df_reviews['clean_teks'])
+                    wordcloud = generate_wordcloud(clean_text_combined)
 
-            # Hitung jumlah masing-masing nilai di kolom 'polarity'
-            polarity_counts = sorted_df_reviews['polarity'].value_counts()
+                    # Tampilkan WordCloud menggunakan Matplotlib
+                    st.subheader("WordCloud Review:")
+                    fig, ax = plt.subplots(figsize=(10, 5))
+                    ax.imshow(wordcloud, interpolation='bilinear')
+                    ax.axis('off')
+                    st.pyplot(fig)
+                    plt.close()  # Tutup plot Matplotlib
+                else:
+                    st.warning("Kolom 'clean_teks' tidak ditemukan dalam DataFrame.")
 
-            # Fungsi untuk membuat pie chart
-            def create_pie_chart(polarity_counts):
-                fig, ax = plt.subplots()
-                ax.pie(polarity_counts, labels=polarity_counts.index, autopct='%1.1f%%', startangle=90)
-                ax.axis('equal')  # Memastikan pie chart berbentuk lingkaran
-                return fig
+            with tab3:
+                # Hitung jumlah masing-masing nilai di kolom 'polarity'
+                polarity_counts = sorted_df_reviews['polarity'].value_counts()
 
-            # Main Streamlit app
-            st.subheader("Diagram Pie dari Distribusi Sentimen Analis Review")
+                # Fungsi untuk membuat pie chart
+                def create_pie_chart(polarity_counts):
+                    fig, ax = plt.subplots()
+                    ax.pie(polarity_counts, labels=polarity_counts.index, autopct='%1.1f%%', startangle=90)
+                    ax.axis('equal')  # Memastikan pie chart berbentuk lingkaran
+                    return fig
 
-            # Menampilkan pie chart
-            st.pyplot(create_pie_chart(polarity_counts))
+                # Main Streamlit app
+                st.subheader("Diagram Pie dari Distribusi Sentimen Analis Review")
+
+                # Menampilkan pie chart
+                st.pyplot(create_pie_chart(polarity_counts))
